@@ -1,65 +1,39 @@
 #include <iostream>
+#include <cstdlib>
 #include<sys/time.h>
 #include<unistd.h>
-#include <cstdlib>
 using namespace std;
-const int N=10000;
-int b[N][N];
+const int N=4096;
+const int count=5000;
 int a[N];
-int sum[N];
+int sum;
 void rand_init(int n)
 {
+    sum=0;
     for(int i=0;i<n;i++)
     {
-        a[i]=rand()%100+1;
-        for(int j=0;j<n;j++)
-        {
-            b[i][j]=rand()%100+1;
-        }
+        a[i]=i;
     }
-
 }
-void col_major(int n,int sum[N],int b[N][N],int a[N])
+void liner(int n,int sum,int a[N])
 {
     struct  timeval   tv_begin,tv_end;
-    unsigned  long col_time;
+    unsigned  long liner_time;
     gettimeofday(&tv_begin,NULL);
-    for(int i = 0; i < n; i++)
+    for(int k=0;k<count;k++)
     {
-        sum[i] = 0;
-        for(int j = 0; j < n; j++)
+        for (int i = 0; i < n; i++)
         {
-            sum[i]+=b[j][i]*a[j];
-        }
-   }
-   gettimeofday(&tv_end,NULL);
-   col_time=1000000 * (tv_end.tv_sec-tv_begin.tv_sec)+ tv_end.tv_usec-tv_begin.tv_usec;
-   cout<<"col_time:"<<col_time<<endl;
-}
-void row_major(int n,int sum[N],int b[N][N],int a[N])
-{
-    struct  timeval   tv_begin,tv_end;
-    unsigned  long row_time;
-    gettimeofday(&tv_begin,NULL);
-    for(int i = 0; i < n; i++)
-    {
-        sum[i] = 0;
-    }
-    for(int j = 0; j < n; j++)
-    {
-        for(int i = 0; i < n; i++)
-        {
-            sum[i] += b[j][i] * a[j ];
+            sum += a[i];
         }
     }
     gettimeofday(&tv_end,NULL);
-    row_time=1000000 * (tv_end.tv_sec-tv_begin.tv_sec)+ tv_end.tv_usec-tv_begin.tv_usec;
-    cout<<"row_time:"<<row_time<<endl;
+   liner_time=1000000 * (tv_end.tv_sec-tv_begin.tv_sec)+ tv_end.tv_usec-tv_begin.tv_usec;
+   cout<<"liner_time:"<<liner_time<<endl;
 }
 
 int main()
 {
     rand_init(N);
-    col_major(N,sum,b,a);
-    row_major(N,sum,b,a);
+    liner(N,sum,a);
 }
